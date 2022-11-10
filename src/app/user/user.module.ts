@@ -10,6 +10,9 @@ import { AuthModalComponent } from './auth-modal/auth-modal.component';
   ],
   imports: [
     CommonModule
+  ],
+  exports: [
+    AuthModalComponent
   ]
 })
 export class UserModule { }
