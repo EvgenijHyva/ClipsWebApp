@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+	// Purge settings, search files in defined locations. Removes unused classes.
+	content: ['./src/**/*.{html,ts}'],  // Boundle size optimizations
+	theme: {
+		extend: {},
+	},
+	plugins: [],
 }
