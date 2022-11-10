@@ -25,3 +25,19 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+# ClipsWebApp
+
+### Application to upload and share gaming highlights. On the homepage there is a list of clips uploaded by users.
+
+### App contains:
+
+- infinite scrilling
+- pages content swaping
+- routing history
+- reusable components
+- firebase
+- video processing
+- web assembly for extracting screenshots from videos
+
+## App based on Angular.
