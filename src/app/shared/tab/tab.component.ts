@@ -8,7 +8,8 @@ import { Component, OnInit, Input } from '@angular/core';
 export class TabComponent implements OnInit {
   constructor() { }
 
-  @Input('tabTitle') tabTitle: string = ''
+  @Input() tabTitle: string = ''
+  @Input() active: boolean = false;
 
   ngOnInit(): void {
   }
