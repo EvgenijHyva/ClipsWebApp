@@ -12,11 +12,12 @@ export class TabsContainerComponent implements AfterContentInit {
 
   @ContentChildren(TabComponent) tabs: QueryList<TabComponent> = new QueryList(); // type safety
   
-  selectTab(tab: TabComponent): void {
+  selectTab(tab: TabComponent): boolean {
     this.tabs?.forEach(tab => {
       tab.active = false
     })
     tab.active = true
+    return false; // prevent default behaviour for ancor <a></a>
   }
 
   ngAfterContentInit(): void {
