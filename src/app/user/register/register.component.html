@@ -1,45 +1,64 @@
 <!-- Registration Form -->
-<form>
+<form [formGroup]="registerForm" (ngSubmit)="register()">
 	<!-- Name -->
 	<div class="mb-3">
 		<label class="inline-block mb-2">Name</label>
-		<input type="text" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
-								duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400" placeholder="Enter Name" />
+		<app-input 
+			[control]="name"
+			placeholder="Enter Name"
+			>
+		</app-input>
 	</div>
 	<!-- Email -->
 	<div class="mb-3">
 		<label class="inline-block mb-2">Email</label>
-		<input type="email" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
-								duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400" placeholder="Enter Email" />
+		<app-input 
+			[control]="email" 
+			placeholder="Enter Email"
+			type="email">
+		</app-input>
 	</div>
 	<!-- Age -->
 	<div class="mb-3">
 		<label class="inline-block mb-2">Age</label>
-		<input type="number" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
-								duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400" />
+		<app-input
+			[control]="age"
+			placeholder="Enter your age"
+			type="number">
+		</app-input>
 	</div>
 	<!-- Password -->
 	<div class="mb-3">
 		<label class="inline-block mb-2">Password</label>
-		<input type="password" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
-								duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400" placeholder="Password" />
+		<app-input 
+			[control]="password"
+			placeholder="Enter password"
+			type="password">
+		</app-input>
 	</div>
 	<!-- Confirm Password -->
 	<div class="mb-3">
 		<label class="inline-block mb-2">Confirm Password</label>
-		<input type="password" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
-								duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
-			placeholder="Confirm Password" />
+		<app-input 
+			[control]="confirm_password" 
+			placeholder="Confirm password" 
+			type="password">
+		</app-input>
 	</div>
 	<!-- Phone Number -->
 	<div class="mb-3">
 		<label class="inline-block mb-2">Phone Number</label>
-		<input type="text" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
-								duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
-			placeholder="Enter Phone Number" />
+		<app-input
+			[control]="phone_number"
+			placeholder="Enter your phone number"
+			format=" (0) 00 000 00-00">
+		</app-input>
 	</div>
-	<button type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition
-								hover:bg-indigo-500">
+	<button type="submit" 
+		class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition hover:bg-indigo-500 
+			disabled:opacity-50 disabled:bg-indigo-400"
+		[disabled]="registerForm.invalid"
+	>
 		Submit
 	</button>
 </form>
