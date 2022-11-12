@@ -1,0 +1,55 @@
+<input 
+	class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded 
+		bg-transparent focus:border-indigo-400" 
+	[placeholder]="placeholder"
+	[type]="type"
+	[formControl]="control"
+	[mask]="format"
+	prefix="+358"
+	[showMaskTyped]="true"
+	placeHolderCharacter="*"
+	[dropSpecialCharacters]="false" />
+
+<ng-container *ngIf="control.touched && control.dirty">
+	<!-- Error messages container -->
+	<p 
+		*ngIf="control.errors?.required" 
+		[class]="errorClass"
+	>
+		Field is required
+	</p>
+	<p 
+		*ngIf="control.errors?.minlength" 
+		[class]="errorClass"
+	>
+		The input value is {{ control.errors?.minlength.actualLength }} charactes long.
+		It must be at least {{ control.errors?.minlength.requiredLength }} charactes long.
+	</p>
+	<p 
+		*ngIf="control.errors?.email" 
+		[class]="errorClass"
+	>
+		Type a valid email please.
+	</p>
+	<p 
+		*ngIf="control.errors?.min"
+		[class]="errorClass"
+	>
+		Value is too low. Min is {{ control.errors?.min.min }}.
+	</p>
+	<p 
+		*ngIf="control.errors?.max" 
+		[class]="errorClass">
+		Value is too hight. Max is {{ control.errors?.max.max }}.
+	</p>
+	<span
+		*ngIf="control.errors?.pattern" 
+		[class]="errorClass">
+		<ul class="error-list">
+			Password should follow described rules:
+			<li>at least 8 characters</li>
+			<li>must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number</li>
+			<li>Can contain special characters</li>
+		</ul>
+	</span>
+</ng-container>

@@ -1,0 +1,8 @@
+.error-list {
+	margin-top: 10px;
+}
+
+.error-list > li::before {
+	content: '-';
+	padding-right: 10px;
+}
