@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 
 @Component({
 	selector: 'app-register',
@@ -42,6 +43,12 @@ export class RegisterComponent  {
 	});
 
 	register() {
-		console.log("this")
+		this.showAlert = true
+		this.alertColor = AlertColorEnum.BLUE;
+		this.alertMessage = 'Please wait, processing account creation';
 	}
+
+	showAlert = false;
+	alertColor: AlertColorEnum = AlertColorEnum.BLUE;
+	alertMessage = 'Please wait, processing account creation';
 }
