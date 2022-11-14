@@ -6,13 +6,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  
+
   creadentials: { email: string, password: string } = {
     email: '',
     password: ''
   }
 
-  login() {
+  login(): void {
     console.log("login ",this.creadentials)
   }
 

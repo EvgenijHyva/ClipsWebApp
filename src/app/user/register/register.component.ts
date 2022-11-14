@@ -42,13 +42,13 @@ export class RegisterComponent  {
 		phone_number: this.phone_number
 	});
 
-	register() {
+	register(): void {
 		this.showAlert = true
 		this.alertColor = AlertColorEnum.BLUE;
 		this.alertMessage = 'Please wait, processing account creation';
 	}
 
-	showAlert = false;
+	showAlert: boolean = false;
 	alertColor: AlertColorEnum = AlertColorEnum.BLUE;
-	alertMessage = 'Please wait, processing account creation';
+	alertMessage :string = 'Please wait, processing account creation';
 }
