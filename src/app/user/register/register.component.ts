@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthService, IUserCollection } from 'src/app/services/auth.service';
 
 @Component({
 	selector: 'app-register',
@@ -11,8 +10,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class RegisterComponent  {
 	constructor(
-		private auth: AngularFireAuth,
-		private db: AngularFirestore
+		public readonly authService: AuthService
 	) {}
 
 	inSubmission: boolean = false;
@@ -59,16 +57,14 @@ export class RegisterComponent  {
 
 		const { email, password } = this.registerForm.value;
 		try {
-			const userCredentials = await this.auth.createUserWithEmailAndPassword(
-				email as string, 
-				password as string
-			);
-			await this.db.collection("users").add({
+			await this.authService.createUser(email, password);
+
+			await this.authService.createUserCollection({
 				name: this.name.value,
 				email: this.email.value,
-				age: this.age.value,
+				age: this.email.value,
 				phone_number: this.phone_number.value
-			});
+			} as IUserCollection)
 
 		} catch (e) {
 			console.error(e)
