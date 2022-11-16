@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
 	selector: 'app-register',
@@ -9,7 +10,10 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 	styleUrls: ['./register.component.css']
 })
 export class RegisterComponent  {
-	constructor(private auth: AngularFireAuth) {}
+	constructor(
+		private auth: AngularFireAuth,
+		private db: AngularFirestore
+	) {}
 
 	inSubmission: boolean = false;
 
@@ -59,7 +63,13 @@ export class RegisterComponent  {
 				email as string, 
 				password as string
 			);
-			console.log(userCredentials)
+			await this.db.collection("users").add({
+				name: this.name.value,
+				email: this.email.value,
+				age: this.age.value,
+				phone_number: this.phone_number.value
+			});
+
 		} catch (e) {
 			console.error(e)
 			this.alertMessage = "An unexpected error occurred."
