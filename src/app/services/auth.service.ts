@@ -1,33 +1,37 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { IUserCollection } from '../models/user.model';
 
 
 @Injectable({
 	providedIn: 'root'
 })
 export class AuthService {
+	private userCollection: AngularFirestoreCollection<IUserCollection>;
+	public isAuthenticated$: boolean = false; // observable naming convention
 
 	constructor(
 		private auth: AngularFireAuth,
 		private db: AngularFirestore
-	) { }
+	) { 
+		this.userCollection = db.collection("users")
+		auth.user.subscribe(console.log)
+	}
 
 	public async createUser(email: string, password:string) {
-		await this.auth.createUserWithEmailAndPassword(
+		if(!password) {
+			throw new Error("Password is required");
+		}
+		return await this.auth.createUserWithEmailAndPassword(
 			email, password
 		);
 	}	
 
-	public async createUserCollection(collection: IUserCollection) {	
-		await this.db.collection("users").add(collection);
+	public async createUserCollection(userUid: string , collection: IUserCollection) {
+		if(!userUid) {
+			throw new Error("User can't be found, please provide uid")
+		}
+		await this.userCollection.doc(userUid).set(collection);
 	}
-}
-
-
-export interface IUserCollection {
-	name: string,
-	email: string,
-	age: string,
-	phone_number: string
 }

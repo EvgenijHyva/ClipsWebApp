@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
-import { AuthService, IUserCollection } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { IUserCollection } from 'src/app/models/user.model';
 
 @Component({
 	selector: 'app-register',
@@ -23,7 +24,7 @@ export class RegisterComponent  {
 		Validators.required,
 		Validators.email
 	])
-	age = new FormControl('', [
+	age = new FormControl<number | null>(null, [
 		Validators.max(120),
 		Validators.min(14)
 	])
@@ -57,14 +58,16 @@ export class RegisterComponent  {
 
 		const { email, password } = this.registerForm.value;
 		try {
-			await this.authService.createUser(email, password);
-
-			await this.authService.createUserCollection({
+			const userCredentials = await this.authService.createUser(email, password);
+			
+			await this.authService.createUserCollection(userCredentials.user!.uid, {
 				name: this.name.value,
 				email: this.email.value,
-				age: this.email.value,
+				age: this.age.value,
 				phone_number: this.phone_number.value
 			} as IUserCollection)
+			
+			await userCredentials.user?.updateProfile({ displayName: this.name.value })
 
 		} catch (e) {
 			console.error(e)
@@ -80,5 +83,5 @@ export class RegisterComponent  {
 
 	showAlert: boolean = false;
 	alertColor: AlertColorEnum = AlertColorEnum.BLUE;
-	alertMessage :string = 'Please wait, processing account creation';
+	alertMessage: string = 'Please wait, processing account creation';
 }
