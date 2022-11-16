@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
+import { AngularFireAuth } from "@angular/fire/compat/auth";
 
 @Component({
 	selector: 'app-register',
@@ -8,6 +9,10 @@ import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 	styleUrls: ['./register.component.css']
 })
 export class RegisterComponent  {
+	constructor(private auth: AngularFireAuth) {}
+
+	inSubmission: boolean = false;
+
 	name = new FormControl('', [
 		Validators.required,
 		Validators.minLength(3)
@@ -42,10 +47,29 @@ export class RegisterComponent  {
 		phone_number: this.phone_number
 	});
 
-	register(): void {
+	async register(): Promise<void> {
+		this.alertColor = AlertColorEnum.BLUE
+		this.alertMessage = 'Please wait, processing account creation'
+		this.inSubmission = true
 		this.showAlert = true
-		this.alertColor = AlertColorEnum.BLUE;
-		this.alertMessage = 'Please wait, processing account creation';
+
+		const { email, password } = this.registerForm.value;
+		try {
+			const userCredentials = await this.auth.createUserWithEmailAndPassword(
+				email as string, 
+				password as string
+			);
+			console.log(userCredentials)
+		} catch (e) {
+			console.error(e)
+			this.alertMessage = "An unexpected error occurred."
+			this.alertColor = AlertColorEnum.RED
+			this.inSubmission = false
+			return
+		}
+
+		this.alertMessage = `Success! your account has been created.`
+		this.alertColor = AlertColorEnum.GREEN;
 	}
 
 	showAlert: boolean = false;
