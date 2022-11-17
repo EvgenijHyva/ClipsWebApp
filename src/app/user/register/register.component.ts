@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { IUserCollection } from 'src/app/models/user.model';
+import { RegisterValidators } from '../validators/register-validators';
 
 @Component({
 	selector: 'app-register',
@@ -48,7 +49,7 @@ export class RegisterComponent  {
 		password: this.password,
 		confirm_password: this.confirm_password,
 		phone_number: this.phone_number
-	});
+	}, [RegisterValidators.match("password", "confirm_password")]);
 
 	async register(): Promise<void> {
 		this.alertColor = AlertColorEnum.BLUE
