@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, ElementRef, OnDestroy } from '@angular/core';
 import { ModalService } from 'src/app/services/modal.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { ModalService } from 'src/app/services/modal.service';
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.css']
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent implements OnInit, OnDestroy {
 
     constructor(
         public modal: ModalService,
@@ -20,7 +20,13 @@ export class ModalComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // Teleportation need to handle destroing element -> bellow
         //document.body.appendChild(this.el.nativeElement)
+    }
+
+    ngOnDestroy(): void {
+        // Teleportation need to handle destroy
+        //document.body.removeChild(this.el.nativeElement)
     }
 
 }
