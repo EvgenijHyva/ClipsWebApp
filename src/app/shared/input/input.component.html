@@ -52,4 +52,7 @@
 			<li>Can contain special characters</li>
 		</ul>
 	</span>
+	<p [class]="errorClass" *ngIf="control.errors?.noMatch">
+		Passwords do not match.
+	</p>
 </ng-container>
