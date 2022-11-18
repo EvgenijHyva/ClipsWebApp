@@ -2,7 +2,9 @@
 <header id="header" class="bg-secondary">
 	<nav class="container mx-auto flex justify-start items-center py-8 px-4">
 		<!-- App Name -->
-		<a class="text-3xl text-indigo-400 font-bold uppercase mr-4 hover:brightness-75" href="index.html">Clipz</a>
+		<a class="text-3xl text-indigo-400 font-bold uppercase mr-4 hover:brightness-75" 
+			routerLink="/" 
+			>Clipz</a>
 
 		<div class="flex flex-grow items-center">
 			<!-- Primary Navigation -->
@@ -10,22 +12,38 @@
 				<!-- Navigation Links -->
 				<li *ngIf="!(auth.isAuthenticated$| async); else authLinks">
 					<a class="px-2 hover:brightness-125" href="#"
-						(click)="openModal($event)">Login / Register
+						(click)="openModal($event)">
+						Login / Register
 					</a>
 				</li>
 				<ng-template #authLinks>
 					<li>
-						<a href="#" class="px-2 hover:text-red-400" (click)="logout($event)"> Logout</a>
+						<a href="#" class="px-2 hover:text-red-400" 
+							(click)="logout($event)"> 
+								Logout
+						</a>
 					</li>
 					<li>
-						<a class="px-2 hover:brightness-125" href="#">Manage</a>
+						<a class="px-2 hover:brightness-125" 
+							routerLinkActive="text-indigo-300"
+							routerLink="/manage"
+							[routerLinkActiveOptions]="{ exact: true }">
+								Manage
+						</a>
 					</li>
 					<li>
-						<a class="px-2 hover:brightness-125" href="#">Upload</a>
+						<a class="px-2 hover:brightness-125" 
+							routerLinkActive="text-indigo-300">
+								Upload
+						</a>
 					</li>
 				</ng-template>
 				<li>
-					<a class="px-2 hover:brightness-125" href="about/">About</a>
+					<a class="px-2 hover:brightness-125" 
+						routerLink="/about" 
+						routerLinkActive="text-indigo-300">
+							About
+					</a>
 				</li>
 			</ul>
 			<!-- Language Switcher -->
