@@ -4,6 +4,7 @@ import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { IUserCollection } from 'src/app/models/user.model';
 import { RegisterValidators } from '../validators/register-validators';
+import { EmailTaken } from '../validators/email-taken';
 
 @Component({
 	selector: 'app-register',
@@ -12,7 +13,8 @@ import { RegisterValidators } from '../validators/register-validators';
 })
 export class RegisterComponent  {
 	constructor(
-		public readonly authService: AuthService
+		private readonly authService: AuthService,
+		private readonly emailTaken: EmailTaken
 	) {}
 
 	inSubmission: boolean = false;
@@ -24,7 +26,7 @@ export class RegisterComponent  {
 	email = new FormControl('', [
 		Validators.required,
 		Validators.email
-	])
+	], [this.emailTaken.validate])
 	age = new FormControl<number | null>(null, [
 		Validators.max(120),
 		Validators.min(14)

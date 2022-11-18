@@ -55,4 +55,7 @@
 	<p [class]="errorClass" *ngIf="control.errors?.noMatch">
 		Passwords do not match.
 	</p>
+	<p [class]="errorClass" *ngIf="control.errors?.emailTaken">
+		Email taken, please try another email.
+	</p>
 </ng-container>
