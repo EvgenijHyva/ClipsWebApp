@@ -1,4 +1,4 @@
-<!-- Header -->
+ <!-- Header -->
 <header id="header" class="bg-secondary">
 	<nav class="container mx-auto flex justify-start items-center py-8 px-4">
 		<!-- App Name -->
@@ -27,7 +27,8 @@
 						<a class="px-2 hover:brightness-125" 
 							routerLinkActive="text-indigo-300"
 							routerLink="/manage"
-							[routerLinkActiveOptions]="{ exact: true }">
+							[routerLinkActiveOptions]="{ exact: true }"
+							[queryParams]="{ sort: '1' }">
 								Manage
 						</a>
 					</li>
