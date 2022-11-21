@@ -27,12 +27,12 @@ import { NotFoundComponent } from './not-found/not-found.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     UserModule,
     AngularFireModule.initializeApp(environment.firebase), // init with credentials in env
     AngularFireAuthModule,
     AngularFirestoreModule, // communicating with firebase 
-    VideoModule
+    VideoModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
