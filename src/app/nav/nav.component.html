@@ -33,7 +33,10 @@
 					</li>
 					<li>
 						<a class="px-2 hover:brightness-125" 
-							routerLinkActive="text-indigo-300">
+							routerLinkActive="text-indigo-300"
+							routerLink="/upload"
+							[routerLinkActiveOptions]="{ exact: true }"
+							>
 								Upload
 						</a>
 					</li>
