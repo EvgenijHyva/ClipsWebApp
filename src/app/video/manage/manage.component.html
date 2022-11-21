@@ -8,7 +8,9 @@
 	</a>
 
 		<!-- Sort Videos -->
-		<select class="text-black px-8 text-xl outline-none appearance-none">
+		<select 
+			class="text-black px-8 text-xl outline-none appearance-none"
+			(change)="sort($event)">
 			<option value="1">Recent Uploads</option>
 			<option value="2">Oldest Uploads</option>
 		</select>
