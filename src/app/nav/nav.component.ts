@@ -19,7 +19,6 @@ export class NavComponent implements OnInit {
 		this.modal.toggleModal('auth');
 	}
 
-
 	ngOnInit(): void {
 	}
 
