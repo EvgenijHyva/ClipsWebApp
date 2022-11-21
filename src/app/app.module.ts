@@ -12,6 +12,7 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { VideoModule } from './video/video.module';
+import { ClipComponent } from './clip/clip.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { VideoModule } from './video/video.module';
     AppComponent,
     NavComponent,
     HomeComponent,
-    AboutComponent
+    AboutComponent,
+    ClipComponent
   ],
   imports: [
     BrowserModule,
