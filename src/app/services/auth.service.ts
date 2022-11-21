@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { Router } from '@angular/router';
 import { delay, map, Observable } from 'rxjs';
 import { IUserCollection } from '../models/user.model';
 
@@ -15,7 +16,8 @@ export class AuthService {
 
 	constructor(
 		private auth: AngularFireAuth,
-		private db: AngularFirestore
+		private db: AngularFirestore,
+		private readonly router: Router
 	) { 
 		this.userCollection = db.collection("users")
 		this.isAuthenticated$ = auth.user.pipe(
@@ -40,5 +42,12 @@ export class AuthService {
 			throw new Error("User can't be found, please provide uid")
 		}
 		await this.userCollection.doc(userUid).set(collection);
+	}
+
+	public async logout(event?: Event) {
+		if (event) 
+			event.preventDefault();
+		await this.auth.signOut();
+		await this.router.navigateByUrl('/')
 	}
 }
