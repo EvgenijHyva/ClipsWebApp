@@ -30,7 +30,8 @@ import { EventBlockerDirective } from './directives/event-blocker.directive';
     TabComponent,
     TabsContainerComponent,
     InputComponent,
-    AlertComponent
+    AlertComponent,
+    EventBlockerDirective
   ]
 })
 export class SharedModule { }
