@@ -6,6 +6,7 @@ import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { last, switchMap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
+import { ClipService } from 'src/app/services/clip.service';
 
 @Component({
     selector: 'app-upload',
@@ -26,7 +27,8 @@ export class UploadComponent implements OnInit {
 
     constructor(
         private readonly storage: AngularFireStorage,
-        private readonly auth: AngularFireAuth
+        private readonly auth: AngularFireAuth,
+        private readonly clipsService: ClipService
     ) { 
         auth.user.subscribe(user => this.user = user)
     }
@@ -71,13 +73,15 @@ export class UploadComponent implements OnInit {
         ).subscribe({
             next: (url) => { 
                 const clip = { 
-                    uid: this.user!.uid,
-                    displayName: this.user!.displayName,
+                    uid: this.user!.uid as string,
+                    displayName: this.user!.displayName as string,
                     title: this.title.value,
                     fileName: `${clipFileName}.mp4`,
                     url
                 }
-                console.log(clip)
+                
+                this.clipsService.createClip(clip)
+                console.log("created", clip)
 
                 this.alertMessageColor = AlertColorEnum.GREEN;
                 this.alertMessage = 'Success, your clip is uploaded.';
