@@ -51,6 +51,7 @@ export class UploadComponent implements OnInit {
     })
 
     uploadFile(): void {
+        this.form.disable()
         this.showPercentage = true;
         this.inSubmission = true;
         this.alertMessageColor = AlertColorEnum.BLUE;
@@ -91,6 +92,7 @@ export class UploadComponent implements OnInit {
                 }, 3000)
             },
             error: (error) => {
+                this.form.enable()
                 // https://firebase.google.com/docs/storage/web/handle-errors firebase error codes
                 this.alertMessageColor = AlertColorEnum.RED;
                 this.alertMessage = 'Upload failed! Please try again later.';
