@@ -3,7 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { v4 as uuid } from 'uuid';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
-import { last } from 'rxjs/operators';
+import { last, switchMap } from 'rxjs/operators';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import firebase from 'firebase/compat/app';
 
 @Component({
     selector: 'app-upload',
@@ -11,7 +13,7 @@ import { last } from 'rxjs/operators';
     styleUrls: ['./upload.component.css']
 })
 export class UploadComponent implements OnInit {
-
+    user: firebase.User | null = null;
     isDragover: boolean = false;
     file: File | null = null;
     nextStep: boolean = false;
@@ -23,8 +25,11 @@ export class UploadComponent implements OnInit {
     showPercentage: boolean = false;
 
     constructor(
-        private readonly storage: AngularFireStorage
-    ) { }
+        private readonly storage: AngularFireStorage,
+        private readonly auth: AngularFireAuth
+    ) { 
+        auth.user.subscribe(user => this.user = user)
+    }
 
     title = new FormControl('', { 
         validators: [
@@ -54,14 +59,26 @@ export class UploadComponent implements OnInit {
         const clipPath = `clips/${clipFileName}.mp4`;
         // observable for upload progress
         const task = this.storage.upload(clipPath, this.file)
+        // reference can't be created before upload is complete, direbase will create temporary placeholder
+        const clipRef = this.storage.ref(clipPath) 
         task.percentageChanges().subscribe(progress => {
             this.precentage = progress as number / 100;
         })
         // snapshot is similar as percentageChanges, difference is type of information
         task.snapshotChanges().pipe(
-            last()
+            last(),
+            switchMap(()=> clipRef.getDownloadURL()) // inner observable
         ).subscribe({
-            next: (snapshot) => { 
+            next: (url) => { 
+                const clip = { 
+                    uid: this.user!.uid,
+                    displayName: this.user!.displayName,
+                    title: this.title.value,
+                    fileName: `${clipFileName}.mp4`,
+                    url
+                }
+                console.log(clip)
+
                 this.alertMessageColor = AlertColorEnum.GREEN;
                 this.alertMessage = 'Success, your clip is uploaded.';
                 this.showPercentage = false;
