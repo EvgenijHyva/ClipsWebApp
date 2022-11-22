@@ -67,7 +67,7 @@ export class UploadComponent implements OnInit {
         // snapshot is similar as percentageChanges, difference is type of information
         task.snapshotChanges().pipe(
             last(),
-            switchMap(()=> clipRef.getDownloadURL()) // inner observable
+            switchMap(() => clipRef.getDownloadURL()) // inner observable will replace snapshot by reference
         ).subscribe({
             next: (url) => { 
                 const clip = { 
