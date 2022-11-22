@@ -27,7 +27,7 @@
 			*ngIf="showAlertMessage" 
 			[color]="alertMessageColor">
 				<p>{{ alertMessage }}</p>
-				<p>{{ precentage | percent }}</p>
+				<p *ngIf="showPercentage">Progress: {{ precentage | percent }}</p>
 			</app-alert>
 			<!-- Form -->
 			<form [formGroup]="form" (ngSubmit)="uploadFile()">

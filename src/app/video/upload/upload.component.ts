@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { v4 as uuid } from 'uuid';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
-
+import { last } from 'rxjs/operators';
 
 @Component({
     selector: 'app-upload',
@@ -20,6 +20,7 @@ export class UploadComponent implements OnInit {
     alertMessageColor: AlertColorEnum = AlertColorEnum.BLUE;
     inSubmission: boolean = false;
     precentage: number = 0;
+    showPercentage: boolean = false;
 
     constructor(
         private readonly storage: AngularFireStorage
@@ -43,6 +44,7 @@ export class UploadComponent implements OnInit {
     })
 
     uploadFile(): void {
+        this.showPercentage = true;
         this.inSubmission = true;
         this.alertMessageColor = AlertColorEnum.BLUE;
         this.alertMessage = "Please wait! Your clip i being uploaded";
@@ -54,7 +56,28 @@ export class UploadComponent implements OnInit {
         const task = this.storage.upload(clipPath, this.file)
         task.percentageChanges().subscribe(progress => {
             this.precentage = progress as number / 100;
-        }) 
+        })
+        // snapshot is similar as percentageChanges, difference is type of information
+        task.snapshotChanges().pipe(
+            last()
+        ).subscribe({
+            next: (snapshot) => { 
+                this.alertMessageColor = AlertColorEnum.GREEN;
+                this.alertMessage = 'Success, your clip is uploaded.';
+                this.showPercentage = false;
+                setTimeout(() => {
+                    this.resetToDefault()
+                }, 3000)
+            },
+            error: (error) => {
+                // https://firebase.google.com/docs/storage/web/handle-errors firebase error codes
+                this.alertMessageColor = AlertColorEnum.RED;
+                this.alertMessage = 'Upload failed! Please try again later.';
+                this.inSubmission = true;
+                this.showPercentage = false;
+                console.error(error)
+            }
+        })
     }
 
     storeFile(event: Event): void {
