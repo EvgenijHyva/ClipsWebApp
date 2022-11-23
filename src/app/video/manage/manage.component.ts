@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { ClipService } from 'src/app/services/clip.service';
 
 @Component({
 	selector: 'app-manage',
@@ -11,7 +12,8 @@ export class ManageComponent implements OnInit {
 
 	constructor(
 		private readonly router: Router,
-		private readonly route: ActivatedRoute
+		private readonly route: ActivatedRoute,
+		private readonly clipService: ClipService
 	) { }
 
 	sort(event: Event): void {
@@ -30,6 +32,7 @@ export class ManageComponent implements OnInit {
 			const { params } = paramsObj;
 			this.videoOrder = params.sort === '2' ? params.sort : '1';
 		})
+		this.clipService.getUserClips().subscribe(console.dir)
 	}
 
 }
