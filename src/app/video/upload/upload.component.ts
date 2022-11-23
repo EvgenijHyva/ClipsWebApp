@@ -26,6 +26,7 @@ export class UploadComponent implements OnDestroy {
     precentage: number = 0;
     showPercentage: boolean = false;
     task?: AngularFireUploadTask;
+    timeoutId: NodeJS.Timeout | null = null;
 
     constructor(
         private readonly storage: AngularFireStorage,
@@ -91,7 +92,7 @@ export class UploadComponent implements OnDestroy {
                 this.alertMessage = 'Success, your clip is uploaded.';
                 this.showPercentage = false;
 
-                setTimeout((): void => {
+                this.timeoutId = setTimeout((): void => {
                     this.router.navigate([
                         'clip', clipDocumentRef.id
                     ])
@@ -136,7 +137,8 @@ export class UploadComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.task?.cancel()
+        this.task?.cancel();
+        clearTimeout(this.timeoutId as NodeJS.Timeout)
     }
 
 }
