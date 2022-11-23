@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
 import { v4 as uuid } from 'uuid';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { last, switchMap } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { ClipService } from 'src/app/services/clip.service';
     templateUrl: './upload.component.html',
     styleUrls: ['./upload.component.css']
 })
-export class UploadComponent implements OnInit {
+export class UploadComponent implements OnDestroy {
     user: firebase.User | null = null;
     isDragover: boolean = false;
     file: File | null = null;
@@ -24,6 +24,7 @@ export class UploadComponent implements OnInit {
     inSubmission: boolean = false;
     precentage: number = 0;
     showPercentage: boolean = false;
+    task?: AngularFireUploadTask;
 
     constructor(
         private readonly storage: AngularFireStorage,
@@ -61,14 +62,14 @@ export class UploadComponent implements OnInit {
         const clipFileName = `${this.title.value}_${uuid()}`
         const clipPath = `clips/${clipFileName}.mp4`;
         // observable for upload progress
-        const task = this.storage.upload(clipPath, this.file)
+        this.task = this.storage.upload(clipPath, this.file)
         // reference can't be created before upload is complete, direbase will create temporary placeholder
         const clipRef = this.storage.ref(clipPath) 
-        task.percentageChanges().subscribe(progress => {
+        this.task.percentageChanges().subscribe(progress => {
             this.precentage = progress as number / 100;
         })
         // snapshot is similar as percentageChanges, difference is type of information
-        task.snapshotChanges().pipe(
+        this.task.snapshotChanges().pipe(
             last(),
             switchMap(() => clipRef.getDownloadURL()) // inner observable will replace snapshot by reference
         ).subscribe({
@@ -82,30 +83,32 @@ export class UploadComponent implements OnInit {
                 }
                 
                 this.clipsService.createClip(clip)
-                console.log("created", clip)
 
                 this.alertMessageColor = AlertColorEnum.GREEN;
                 this.alertMessage = 'Success, your clip is uploaded.';
                 this.showPercentage = false;
                 setTimeout(() => {
                     this.resetToDefault()
-                }, 3000)
+                }, 4000)
             },
             error: (error) => {
+                if (error.code == "storage/unknown" ) console.log("Upload canceled")
+                if (error.code == "storage/unauthorized") console.log("Access denied, you can upload only mp4 files")
                 this.form.enable()
                 // https://firebase.google.com/docs/storage/web/handle-errors firebase error codes
                 this.alertMessageColor = AlertColorEnum.RED;
-                this.alertMessage = 'Upload failed! Please try again later.';
-                this.inSubmission = true;
+                this.alertMessage = 'Upload failed! You can upload only mp4 files. Please try again later.';
+                this.inSubmission = false;
                 this.showPercentage = false;
-                console.error(error)
             }
         })
     }
 
     storeFile(event: Event): void {
         this.isDragover = false
-        this.file = (event as DragEvent).dataTransfer?.files.item(0) ?? null
+        this.file = (event as DragEvent).dataTransfer ?
+            (event as DragEvent).dataTransfer?.files.item(0) ?? null : 
+            (event.target as HTMLInputElement).files?.item(0) ?? null
         const { name } = this.file!
         // if (!this.file || this.file.type !== 'video/mp4') {
         //     return
@@ -122,9 +125,11 @@ export class UploadComponent implements OnInit {
         this.file = null;
         this.title.setValue('');
         this.nextStep = false;
+        this.task = undefined;
     }
 
-    ngOnInit(): void {
+    ngOnDestroy(): void {
+        this.task?.cancel()
     }
 
 }

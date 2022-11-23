@@ -20,8 +20,11 @@
 		</div>
 
 		<!-- Video Editor -->
-		<div *ngIf="!nextStep; else uploadFormContainer">
-		</div>
+		<ng-container *ngIf="!nextStep; else uploadFormContainer">
+			<div >
+			</div>
+			<input type="file" class="mt-4" (change)="storeFile($event)">
+		</ng-container>
 		<ng-template #uploadFormContainer>
 			<app-alert 
 			*ngIf="showAlertMessage" 
