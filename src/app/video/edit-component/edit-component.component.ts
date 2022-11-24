@@ -70,7 +70,15 @@ export class EditComponentComponent implements OnInit, OnDestroy, OnChanges {
 		setTimeout(() => {
 			if(this.modal.isModalVisible(this.modalId))
 				this.modal.toggleModal(this.modalId)
+			this.resetToDefault()
 		}, 2000)
+	}
+
+	resetToDefault() {
+		this.inSubmission = false;
+		this.showAlertMessage = false;
+		this.alertMessageColor = AlertColorEnum.BLUE;
+		this.alertMessage = 'Please wait, updating clip.';
 	}
 
 	ngOnInit(): void {
@@ -84,8 +92,6 @@ export class EditComponentComponent implements OnInit, OnDestroy, OnChanges {
 	ngOnChanges(): void {
 		if (!this.activeClip) return;
 		this.inSubmission = false;
-		this.alertMessage = 'Please wait, updating clip.';
-		this.showAlertMessage = false;
 		this.clipID.setValue(this.activeClip.docID as string);
 		this.title.setValue(this.activeClip.title);
 	}
