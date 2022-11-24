@@ -22,7 +22,7 @@ export class ManageComponent implements OnInit {
 	) { }
 
 	sort(event: Event): void {
-		const { value } = (event.target as HTMLSelectElement)
+		const { value } = (event.target as HTMLSelectElement);
 
 		this.router.navigate([], {
 			relativeTo: this.route,
@@ -35,7 +35,7 @@ export class ManageComponent implements OnInit {
 	openModal(event:Event, clip:IClip) {
 		event.preventDefault();
 		this.activeClip = clip;
-		this.modal.toggleModal('editClip')
+		this.modal.toggleModal('editClip');
 	}
 
 	update(event: IClip) {
@@ -43,6 +43,12 @@ export class ManageComponent implements OnInit {
 			if(clip.docID === event.docID)
 				this.clips[index].title = event.title
 		})
+	}
+
+	deleteUserClip(event: Event, clip: IClip) {
+		event.preventDefault();
+		this.clipService.deleteUserClip(clip);
+		this.clips = this.clips.filter(userClip => userClip.docID !== clip.docID);
 	}
 
 	ngOnInit(): void {
