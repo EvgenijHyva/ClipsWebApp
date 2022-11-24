@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, OnChanges, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import { IClip } from 'src/app/models/clip.model';
 import { ModalService } from 'src/app/services/modal.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
+import { ClipService } from 'src/app/services/clip.service';
 
 @Component({
 	selector: 'app-edit-component',
@@ -12,9 +14,16 @@ export class EditComponentComponent implements OnInit, OnDestroy, OnChanges {
 	modalId: 'editClip' = 'editClip';
 
 	@Input('activeClip') activeClip: IClip | null = null;
-	
+	@Output() update = new EventEmitter();
+
+	showAlertMessage: boolean = false;
+	alertMessageColor!: AlertColorEnum;
+	alertMessage: string = '';
+	inSubmission: boolean = false;
+
 	constructor(
-		private readonly modal: ModalService
+		private readonly modal: ModalService,
+		private readonly clipService: ClipService
 	) { }
 		
 		
@@ -34,6 +43,43 @@ export class EditComponentComponent implements OnInit, OnDestroy, OnChanges {
         title: this.title,
     })
 
+	async submit() {
+		if(!this.activeClip) return;
+		
+		this.inSubmission = true;
+		this.showAlertMessage = true;
+		this.alertMessageColor = AlertColorEnum.BLUE;
+		this.alertMessage = 'Please wait, updating clip.'
+		try {
+			await this.clipService.updateClip(
+				this.clipID.value, 
+				this.title.value
+			) 
+		} catch(e) {
+			this.inSubmission = false;
+			this.alertMessageColor = AlertColorEnum.RED
+			this.alertMessage = 'Error occured. Try again later'
+			return
+		}
+		this.alertMessageColor = AlertColorEnum.GREEN;
+		this.alertMessage = 'Success!'
+
+		this.activeClip.title = this.title.value;
+		this.update.emit(this.activeClip)
+		
+		setTimeout(() => {
+			if(this.modal.isModalVisible(this.modalId))
+				this.modal.toggleModal(this.modalId)
+			this.resetToDefault()
+		}, 2000)
+	}
+
+	resetToDefault() {
+		this.inSubmission = false;
+		this.showAlertMessage = false;
+		this.alertMessageColor = AlertColorEnum.BLUE;
+		this.alertMessage = 'Please wait, updating clip.';
+	}
 
 	ngOnInit(): void {
 		this.modal.register(this.modalId);
@@ -44,7 +90,7 @@ export class EditComponentComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	ngOnChanges(): void {
-		if (!this.activeClip) return
+		if (!this.activeClip) return;
 		this.clipID.setValue(this.activeClip.docID as string)
 		this.title.setValue(this.activeClip.title)
 	}

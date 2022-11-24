@@ -23,7 +23,7 @@ export class UploadComponent implements OnDestroy {
     showAlertMessage: boolean = false;
     alertMessageColor: AlertColorEnum = AlertColorEnum.BLUE;
     inSubmission: boolean = false;
-    precentage: number = 0;
+    percentage: number = 0;
     showPercentage: boolean = false;
     task?: AngularFireUploadTask;
     timeoutId: NodeJS.Timeout | null = null;
@@ -69,7 +69,7 @@ export class UploadComponent implements OnDestroy {
         // reference can't be created before upload is complete, direbase will create temporary placeholder
         const clipRef = this.storage.ref(clipPath) 
         this.task.percentageChanges().subscribe(progress => {
-            this.precentage = progress as number / 100;
+            this.percentage = progress as number / 100;
         })
         // snapshot is similar as percentageChanges, difference is type of information
         this.task.snapshotChanges().pipe(

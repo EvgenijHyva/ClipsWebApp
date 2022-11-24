@@ -27,10 +27,10 @@
 		</ng-container>
 		<ng-template #uploadFormContainer>
 			<app-alert 
-			*ngIf="showAlertMessage" 
-			[color]="alertMessageColor">
+				*ngIf="showAlertMessage" 
+				[color]="alertMessageColor">
 				<p>{{ alertMessage }}</p>
-				<p *ngIf="showPercentage">Progress: {{ precentage | percent }}</p>
+				<p *ngIf="showPercentage">Progress: {{ percentage | percent }}</p>
 			</app-alert>
 			<!-- Form -->
 			<form [formGroup]="form" (ngSubmit)="uploadFile()">

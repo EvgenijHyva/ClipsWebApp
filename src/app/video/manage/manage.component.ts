@@ -38,6 +38,13 @@ export class ManageComponent implements OnInit {
 		this.modal.toggleModal('editClip')
 	}
 
+	update(event: IClip) {
+		this.clips.forEach((clip, index) => {
+			if(clip.docID === event.docID)
+				this.clips[index].title = event.title
+		})
+	}
+
 	ngOnInit(): void {
 		this.route.queryParamMap.subscribe((paramsObj: Params): void => {
 			const { params } = paramsObj;
