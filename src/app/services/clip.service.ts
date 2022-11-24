@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference, QuerySnapshot } from '@angular/fire/compat/firestore';
 import { IClip } from '../models/clip.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { of, switchMap, map } from 'rxjs';
+import { of, switchMap, map, BehaviorSubject, combineLatest } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { clipsSortingDirection } from '../video/manage/manage.component';
 
 @Injectable({
     providedIn: 'root'
@@ -23,14 +24,21 @@ export class ClipService {
 		return this.clipsCollection.add(data)
 	}
 
-	getUserClips() {
-		return this.auth.user.pipe(
-			switchMap(user => {
+	getUserClips(sort$: BehaviorSubject<clipsSortingDirection>) {
+		return combineLatest([
+			this.auth.user, 
+			sort$ // combined sorting observable defined in manage component
+		]).pipe(
+			switchMap(values => {
+				const [user, sort] = values;
 				if(!user) {
 					return of([])
 				}
 				const query = this.clipsCollection.ref.where(
 					'uid', "==", user.uid
+				).orderBy(
+					'timestamp',	// sorting property name 
+					sort === '1' ? 'desc' : 'asc' // sort direction
 				)
 
 				return query.get()
