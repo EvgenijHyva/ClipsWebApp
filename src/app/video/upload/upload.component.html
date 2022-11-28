@@ -19,56 +19,65 @@
 			<h5>Drop your file here (mp4 only!)</h5>
 		</div>
 
-		<!-- Video Editor -->
-		<ng-container *ngIf="!nextStep; else uploadFormContainer">
-			<div >
-			</div>
-			<input type="file" class="mt-4" (change)="storeFile($event)">
+		<ng-container *ngIf="!ffmpegService.isReady; else uploadEditorCtr">
+			<span class="text-center text-6xl p-8 block">
+				<span class="material-symbols-outlined text-sky-300 animate-spin-clockwise-slow">
+					settings
+				</span>
+				<span class="material-symbols-outlined text-orange-300 animate-spin-slow">
+					settings
+				</span>
+				<span class="material-symbols-outlined animate-spin-clockwise">
+					settings
+				</span>
+			</span>
 		</ng-container>
-		<ng-template #uploadFormContainer>
-			<app-alert 
-				*ngIf="showAlertMessage" 
-				[color]="alertMessageColor">
-				<p>{{ alertMessage }}</p>
-				<p *ngIf="showPercentage">Progress: {{ percentage | percent }}</p>
-			</app-alert>
-			<!-- Form -->
-			<form [formGroup]="form" (ngSubmit)="uploadFile()">
-				<!-- Screenshots -->
-				<h2 class="mb-4 text-xl">Select a Thumbnail</h2>
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-					<div class="border-8 cursor-pointer border-green-400">
-						<img src="assets/img/1.jpg">
-					</div>
-					<div class="border-8 cursor-pointer border-transparent">
-						<img src="assets/img/2.jpg">
-					</div>
-					<div class="border-8 cursor-pointer border-transparent">
-						<img src="assets/img/3.jpg">
-					</div>
-				</div>
-		
-				<!-- Title -->
-				<div class="mt-4">
-					<label class="block text-xl mb-4" for="title">Title</label>
-					<app-input 
-						id="title" 
-						[control]="title" 
-						placeholder="Define an title" 
-					>
-					</app-input>
-				</div>
 
-		
-				<div class="mt-4 text-right">
-					<button type="submit"
-						[disabled]="inSubmission"
-						class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm rounded-md text-white bg-indigo-600 
-							cursor-pointer hover:bg-indigo-700 focus:outline-none disabled:opacity-50 disabled:bg-indigo-400 disabled:cursor-default">
-						Publish
-					</button>
+		<ng-template #uploadEditorCtr>
+			<!-- Video Editor -->
+			<ng-container *ngIf="!nextStep; else uploadFormContainer">
+				<div>
 				</div>
-			</form>
+				<input type="file" class="mt-4" (change)="storeFile($event)">
+			</ng-container>
+			<ng-template #uploadFormContainer>
+				<app-alert *ngIf="showAlertMessage" [color]="alertMessageColor">
+					<p>{{ alertMessage }}</p>
+					<p *ngIf="showPercentage">Progress: {{ percentage | percent }}</p>
+				</app-alert>
+				<!-- Form -->
+				<form [formGroup]="form" (ngSubmit)="uploadFile()">
+					<!-- Screenshots -->
+					<h2 class="mb-4 text-xl">Select a Thumbnail</h2>
+					<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+						<div class="border-8 cursor-pointer border-green-400">
+							<img src="assets/img/1.jpg">
+						</div>
+						<div class="border-8 cursor-pointer border-transparent">
+							<img src="assets/img/2.jpg">
+						</div>
+						<div class="border-8 cursor-pointer border-transparent">
+							<img src="assets/img/3.jpg">
+						</div>
+					</div>
+			
+					<!-- Title -->
+					<div class="mt-4">
+						<label class="block text-xl mb-4" for="title">Title</label>
+						<app-input id="title" [control]="title" placeholder="Define an title">
+						</app-input>
+					</div>
+			
+			
+					<div class="mt-4 text-right">
+						<button type="submit" [disabled]="inSubmission"
+							class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm rounded-md text-white bg-indigo-600 
+										cursor-pointer hover:bg-indigo-700 focus:outline-none disabled:opacity-50 disabled:bg-indigo-400 disabled:cursor-default">
+							Publish
+						</button>
+					</div>
+				</form>
+			</ng-template>
 		</ng-template>
 	</div>
 </section>

@@ -8,6 +8,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
 import { ClipService } from 'src/app/services/clip.service';
 import { Router } from '@angular/router';
+import { FfmpegService } from 'src/app/services/ffmpeg.service';
 
 @Component({
     selector: 'app-upload',
@@ -32,9 +33,11 @@ export class UploadComponent implements OnDestroy {
         private readonly storage: AngularFireStorage,
         private readonly auth: AngularFireAuth,
         private readonly clipsService: ClipService,
-        private readonly router: Router
+        private readonly router: Router,
+        public readonly ffmpegService: FfmpegService
     ) { 
-        auth.user.subscribe(user => this.user = user)
+        auth.user.subscribe(user => this.user = user);
+        this.ffmpegService.init();
     }
 
     title = new FormControl('', { 

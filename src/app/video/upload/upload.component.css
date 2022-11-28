@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0");
+
+.material-symbols-outlined {
+	font-family: 'Material Symbols Outlined';
+	font-size: 1em;
+}
+
+.material-symbols-outlined:nth-child(2) {
+	font-size: .75em;
+	margin-right: -10px;
+}
+
+.material-symbols-outlined:nth-child(1) {
+	font-size: .85em;
+	margin-right: -10px;
+}
