@@ -114,15 +114,19 @@ export class UploadComponent implements OnDestroy {
         })
     }
 
-    storeFile(event: Event): void {
+    async storeFile(event: Event): Promise<void> {
         this.isDragover = false
         this.file = (event as DragEvent).dataTransfer ?
             (event as DragEvent).dataTransfer?.files.item(0) ?? null : 
-            (event.target as HTMLInputElement).files?.item(0) ?? null
-        const { name } = this.file!
-        // if (!this.file || this.file.type !== 'video/mp4') {
-        //     return
-        // }
+            (event.target as HTMLInputElement).files?.item(0) ?? null;
+        if (!this.file || this.file.type !== 'video/mp4') {
+            return;
+        }
+        
+        await this.ffmpegService.getScreenshots(this.file as File);
+        
+        const { name } = this.file as File;
+
         this.title.setValue(name.replace(/\.[^/.]+$/, ''))
         this.nextStep = true;
     }

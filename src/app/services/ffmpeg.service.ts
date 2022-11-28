@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createFFmpeg, FFmpeg } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, FFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 
 
 @Injectable({
@@ -20,5 +20,11 @@ export class FfmpegService {
 
 		await this.ffmpeg.load();
 		this.isReady = true;
+	}
+
+	async getScreenshots(file: File) {
+		const data = await fetchFile(file); // convert to binary data
+		this.ffmpeg.FS('writeFile', file.name, data); //File system: read and write files
+		return;
 	}
 }
