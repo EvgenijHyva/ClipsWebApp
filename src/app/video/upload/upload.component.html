@@ -1,23 +1,34 @@
 <section class="container mx-auto my-8 bg-secondary p-6">
-	<div class="rounded relative flex flex-col">
-		<div class="font-bold mb-6">Upload Video</div>
-		<!-- Upload Dropbox -->
-		<div 
-			app-event-blocker
-			(dragend)="isDragover = false"
-			(dragover)="isDragover = true"
-			(dragenter)="isDragover = true"
-			(dragleave)="isDragover = false"
-			(mouseleave)=" isDragover = false"
-			(drop)="storeFile($event)"
-			[ngClass]="{
-				'bg-indigo-400 border-indigo-400 border-solid': isDragover
-			}"
-			class="w-full px-10 py-40 rounded text-center cursor-pointer border border-dashed
-			border-gray-400 transition duration-500 hover:text-white
-			hover:bg-indigo-400 hover:border-indigo-400 hover:border-solid text-xl">
-			<h5>Drop your file here (mp4 only!)</h5>
-		</div>
+	<div class="rounded relative flex flex-col" >
+		<ng-container *ngIf="!nextStep">
+			<div class="font-bold mb-6">Upload Video</div>
+			<!-- Upload Dropbox -->
+			<div 
+				app-event-blocker
+				(dragend)="isDragover = false"
+				(dragover)="isDragover = true"
+				(dragenter)="isDragover = true"
+				(dragleave)="isDragover = false"
+				(mouseleave)=" isDragover = false"
+				(drop)="storeFile($event)"
+				[ngClass]="{
+					'bg-indigo-400 border-indigo-400 border-solid': isDragover
+				}"
+				class="w-full px-10 py-40 rounded text-center cursor-pointer border border-dashed
+				border-gray-400 transition duration-500 hover:text-white
+				hover:bg-indigo-400 hover:border-indigo-400 hover:border-solid text-xl">
+				<ng-container *ngIf="ffmpegService.isRunning; else fileInfoBox">
+					<p>Please wait, file processing</p>
+					<span class="material-icons text-center text-6xl p-8 animate-spin-slow" >
+						autorenew
+					</span>
+				</ng-container>
+				<ng-template #fileInfoBox>
+					<h5>Drop your file here (mp4 only!)</h5>
+				</ng-template>
+			</div>
+		</ng-container>
+		
 
 		<ng-container *ngIf="!ffmpegService.isReady; else uploadEditorCtr">
 			<span class="text-center text-6xl p-8 block">
@@ -48,12 +59,16 @@
 				<!-- Form -->
 				<form [formGroup]="form" (ngSubmit)="uploadFile()">
 					<!-- Screenshots -->
-					<h2 class="mb-4 text-xl">Select a Thumbnail</h2>
+					<h2 class="mb-4 text-xl">Select an screenshot</h2>
 					<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 						<div 
 							*ngFor="let screenshot of screenshots"
-							class="border-8 cursor-pointer border-green-400">
-							<img [src]="screenshot | saveURL">
+							class="border-8 cursor-pointer hover:border-yellow-100 hover:blur-none" 
+							[ngClass]="{ 
+								'border-green-500 hover:border-green-500': selectedScreenshot === screenshot, 
+								'blur-sm': selectedScreenshot !== screenshot
+							}">
+							<img [src]="screenshot | saveURL" (click)="selectNewScreenshot($event)">
 						</div>
 					</div>
 			

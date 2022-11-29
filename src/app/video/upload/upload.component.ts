@@ -29,6 +29,7 @@ export class UploadComponent implements OnDestroy {
     task?: AngularFireUploadTask;
     timeoutId: NodeJS.Timeout | null = null;
     screenshots: string[] = [];
+    selectedScreenshot: string = '';
 
     constructor(
         private readonly storage: AngularFireStorage,
@@ -116,6 +117,8 @@ export class UploadComponent implements OnDestroy {
     }
 
     async storeFile(event: Event): Promise<void> {
+        if (this.ffmpegService.isRunning) return; // stop user of uploading file while service is runing
+
         this.isDragover = false
         this.file = (event as DragEvent).dataTransfer ?
             (event as DragEvent).dataTransfer?.files.item(0) ?? null : 
@@ -125,11 +128,16 @@ export class UploadComponent implements OnDestroy {
         }
         
         this.screenshots = await this.ffmpegService.getScreenshots(this.file as File);
-        
+        this.selectedScreenshot = this.screenshots[0];
+
         const { name } = this.file as File;
 
         this.title.setValue(name.replace(/\.[^/.]+$/, ''))
         this.nextStep = true;
+    }
+
+    selectNewScreenshot(event: Event) {
+        this.selectedScreenshot = (event.target as HTMLImageElement).src;
     }
 
     resetToDefault() {

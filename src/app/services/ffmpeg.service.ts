@@ -6,6 +6,7 @@ import { createFFmpeg, FFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 	providedIn: 'root'
 })
 export class FfmpegService {
+	isRunning: boolean = false;
 	isReady: boolean = false;
 	private ffmpeg: FFmpeg;
 
@@ -23,6 +24,7 @@ export class FfmpegService {
 	}
 
 	async getScreenshots(file: File) {
+		this.isRunning = true;
 		const data = await fetchFile(file); // convert to binary data
 		this.ffmpeg.FS('writeFile', file.name, data); //File system: read and write files
 		// series of random screenshots
@@ -47,7 +49,7 @@ export class FfmpegService {
 				`output_${time}.png` // output file name and type
 			)
 		}
-		await this.ffmpeg.run(...commands)
+		await this.ffmpeg.run(...commands);
 
 		const screenshots: string[] = [];
 		timeArray.forEach(time => {
@@ -57,10 +59,11 @@ export class FfmpegService {
 					type: 'image/png'
 				}
 			);
-			const screenshotURL = URL.createObjectURL(screenshotBlob)
-			screenshots.push(screenshotURL)
+			const screenshotURL = URL.createObjectURL(screenshotBlob);
+			screenshots.push(screenshotURL);
 		})
-		return screenshots
+		this.isRunning = false;
+		return screenshots;
 	}
 }
 export const getVideoDuration = (file:File):Promise<number> =>
