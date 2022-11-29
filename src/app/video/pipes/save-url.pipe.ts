@@ -1,12 +1,16 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Pipe({
-  name: 'saveURL'
+	name: 'saveURL'
 })
 export class SaveURLPipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown {
-    return null;
-  }
+	constructor(private readonly sanitizer: DomSanitizer) {}
+
+	transform(Url: string) {
+		// Should be used carefully
+		return this.sanitizer.bypassSecurityTrustUrl(Url);
+	}
 
 }

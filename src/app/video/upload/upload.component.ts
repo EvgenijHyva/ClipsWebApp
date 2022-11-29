@@ -28,6 +28,7 @@ export class UploadComponent implements OnDestroy {
     showPercentage: boolean = false;
     task?: AngularFireUploadTask;
     timeoutId: NodeJS.Timeout | null = null;
+    screenshots: string[] = [];
 
     constructor(
         private readonly storage: AngularFireStorage,
@@ -123,7 +124,7 @@ export class UploadComponent implements OnDestroy {
             return;
         }
         
-        await this.ffmpegService.getScreenshots(this.file as File);
+        this.screenshots = await this.ffmpegService.getScreenshots(this.file as File);
         
         const { name } = this.file as File;
 

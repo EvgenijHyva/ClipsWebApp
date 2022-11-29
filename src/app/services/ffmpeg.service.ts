@@ -7,7 +7,6 @@ import { createFFmpeg, FFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 })
 export class FfmpegService {
 	isReady: boolean = false;
-	currentVideoDuration: number = 0;
 	private ffmpeg: FFmpeg;
 
 	constructor() { 
