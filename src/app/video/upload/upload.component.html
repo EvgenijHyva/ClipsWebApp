@@ -47,8 +47,6 @@
 		<ng-template #uploadEditorCtr>
 			<!-- Video Editor -->
 			<ng-container *ngIf="!nextStep; else uploadFormContainer">
-				<div>
-				</div>
 				<input type="file" class="mt-4" (change)="storeFile($event)">
 			</ng-container>
 			<ng-template #uploadFormContainer>
