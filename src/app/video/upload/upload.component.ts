@@ -1,14 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
-import { v4 as uuid } from 'uuid';
-import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
-import { last, switchMap } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
+import { v4 as uuid } from 'uuid';
+import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { ClipService } from 'src/app/services/clip.service';
-import { Router } from '@angular/router';
 import { FfmpegService } from 'src/app/services/ffmpeg.service';
+import { last, switchMap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 
 @Component({
     selector: 'app-upload',
@@ -81,9 +82,20 @@ export class UploadComponent implements OnDestroy {
         this.task = this.storage.upload(clipPath, this.file);
         // reference can't be created before upload is complete, direbase will create temporary placeholder
         const clipRef = this.storage.ref(clipPath) ;
-        this.task.percentageChanges().subscribe(progress => {
-            this.percentage = progress as number / 100;
+
+        // clip and screenshots upload progresbar (combined observables)
+        combineLatest([
+            this.task.percentageChanges(),
+            this.screenshotTask.percentageChanges()
+        ]).subscribe((progress) => { // not a single value, it store a values from 2 observable
+            const [clipProgress, screenshotProgress] = progress; 
+            if(!clipProgress || !screenshotProgress) {
+                return
+            }
+            const total = clipProgress + screenshotProgress; 
+            this.percentage = total as number / 200; 
         });
+
         // snapshot is similar as percentageChanges, difference is type of information
         this.task.snapshotChanges().pipe(
             last(),
