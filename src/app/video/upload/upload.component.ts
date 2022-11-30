@@ -90,7 +90,7 @@ export class UploadComponent implements OnDestroy {
         ]).subscribe((progress) => { // not a single value, it store a values from 2 observable
             const [clipProgress, screenshotProgress] = progress; 
             if(!clipProgress || !screenshotProgress) {
-                return
+                return;
             }
             const total = clipProgress + screenshotProgress; 
             this.percentage = total as number / 200; 
@@ -152,24 +152,12 @@ export class UploadComponent implements OnDestroy {
 
         const { name } = this.file as File;
 
-        this.title.setValue(name.replace(/\.[^/.]+$/, ''))
+        this.title.setValue(name.replace(/\.[^/.]+$/, ''));
         this.nextStep = true;
     }
 
     selectNewScreenshot(event: Event) {
         this.selectedScreenshot = (event.target as HTMLImageElement).src;
-    }
-
-    resetToDefault() {
-        // for future use
-        this.inSubmission = false;
-        this.alertMessage;
-        this.alertMessageColor = AlertColorEnum.BLUE;
-        this.showAlertMessage = false;
-        this.file = null;
-        this.title.setValue('');
-        this.nextStep = false;
-        this.task = undefined;
     }
 
     ngOnDestroy(): void {
