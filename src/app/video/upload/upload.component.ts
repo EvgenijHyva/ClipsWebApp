@@ -8,8 +8,9 @@ import { v4 as uuid } from 'uuid';
 import { AlertColorEnum } from 'src/app/shared/alert/alert.component';
 import { ClipService } from 'src/app/services/clip.service';
 import { FfmpegService } from 'src/app/services/ffmpeg.service';
-import { last, switchMap } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { combineLatest, forkJoin } from 'rxjs';
+import { IClip } from 'src/app/models/clip.model';
 
 @Component({
     selector: 'app-upload',
@@ -80,9 +81,10 @@ export class UploadComponent implements OnDestroy {
         );
         // observable for upload progress
         this.task = this.storage.upload(clipPath, this.file);
-        // reference can't be created before upload is complete, direbase will create temporary placeholder
-        const clipRef = this.storage.ref(clipPath) ;
-
+        // reference can't be created before upload is complete, firebase will create temporary placeholder
+        const clipRef = this.storage.ref(clipPath);
+        // for link to screenshots
+        const screenshotRef  =this.storage.ref(screenshotPath);
         // clip and screenshots upload progresbar (combined observables)
         combineLatest([
             this.task.percentageChanges(),
@@ -97,18 +99,25 @@ export class UploadComponent implements OnDestroy {
         });
 
         // snapshot is similar as percentageChanges, difference is type of information
-        this.task.snapshotChanges().pipe(
-            last(),
-            switchMap(() => clipRef.getDownloadURL()) // inner observable will replace snapshot by reference
+        forkJoin([ // forkJoin will wait untill observables finished
+            this.task.snapshotChanges(),
+            this.screenshotTask.snapshotChanges()
+        ]).pipe(
+            switchMap(() => forkJoin([
+                clipRef.getDownloadURL(),
+                screenshotRef.getDownloadURL()
+            ])) // inner observable will replace snapshot by reference
         ).subscribe({
-            next: async (url) => { 
-                const clip = { 
+            next: async (urls) => { 
+                const [ clipURL, screenshotURL] = urls;
+                const clip: IClip = { 
                     uid: this.user!.uid as string,
                     displayName: this.user!.displayName as string,
                     title: this.title.value,
                     fileName: `${clipFileName}.mp4`,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(), // for consistency, used server timestamp
-                    url
+                    url: clipURL,
+                    screenshotURL
                 }
                 
                 const clipDocumentRef = await this.clipsService.createClip(clip);
