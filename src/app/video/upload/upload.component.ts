@@ -30,6 +30,7 @@ export class UploadComponent implements OnDestroy {
     timeoutId: NodeJS.Timeout | null = null;
     screenshots: string[] = [];
     selectedScreenshot: string = '';
+    screenshotTask?: AngularFireUploadTask;
 
     constructor(
         private readonly storage: AngularFireStorage,
@@ -59,7 +60,7 @@ export class UploadComponent implements OnDestroy {
         // thumbnail: this.thumbnail
     })
 
-    uploadFile(): void {
+    async uploadFile(): Promise<void> {
         this.form.disable()
         this.showPercentage = true;
         this.inSubmission = true;
@@ -67,15 +68,22 @@ export class UploadComponent implements OnDestroy {
         this.alertMessage = "Please wait! Your clip i being uploaded";
         this.showAlertMessage = true;
 
-        const clipFileName = `${this.title.value}_${uuid()}`
+        const clipFileName = `${this.title.value}_${uuid()}`;
         const clipPath = `clips/${clipFileName}.mp4`;
+
+        const screenshotBlob = await this.ffmpegService.blobFromURL(this.selectedScreenshot);
+        const screenshotPath = `screenshots/${clipFileName}.png`; // firebase storage
+        this.screenshotTask = this.storage.upload(
+            screenshotPath, 
+            screenshotBlob
+        );
         // observable for upload progress
-        this.task = this.storage.upload(clipPath, this.file)
+        this.task = this.storage.upload(clipPath, this.file);
         // reference can't be created before upload is complete, direbase will create temporary placeholder
-        const clipRef = this.storage.ref(clipPath) 
+        const clipRef = this.storage.ref(clipPath) ;
         this.task.percentageChanges().subscribe(progress => {
             this.percentage = progress as number / 100;
-        })
+        });
         // snapshot is similar as percentageChanges, difference is type of information
         this.task.snapshotChanges().pipe(
             last(),
@@ -91,7 +99,7 @@ export class UploadComponent implements OnDestroy {
                     url
                 }
                 
-                const clipDocumentRef = await this.clipsService.createClip(clip)
+                const clipDocumentRef = await this.clipsService.createClip(clip);
 
                 this.alertMessageColor = AlertColorEnum.GREEN;
                 this.alertMessage = 'Success, your clip is uploaded.';
@@ -104,9 +112,9 @@ export class UploadComponent implements OnDestroy {
                 }, 1500)
             },
             error: (error) => {
-                if (error.code == "storage/unknown" ) console.log("Upload canceled")
-                if (error.code == "storage/unauthorized") console.log("Access denied, you can upload only mp4 files")
-                this.form.enable()
+                if (error.code == "storage/unknown" ) console.log("Upload canceled");
+                if (error.code == "storage/unauthorized") console.log("Access denied, you can upload only mp4 files");
+                this.form.enable();
                 // https://firebase.google.com/docs/storage/web/handle-errors firebase error codes
                 this.alertMessageColor = AlertColorEnum.RED;
                 this.alertMessage = 'Upload failed! You can upload only mp4 files. Please try again later.';
@@ -119,7 +127,7 @@ export class UploadComponent implements OnDestroy {
     async storeFile(event: Event): Promise<void> {
         if (this.ffmpegService.isRunning) return; // stop user of uploading file while service is runing
 
-        this.isDragover = false
+        this.isDragover = false;
         this.file = (event as DragEvent).dataTransfer ?
             (event as DragEvent).dataTransfer?.files.item(0) ?? null : 
             (event.target as HTMLInputElement).files?.item(0) ?? null;
@@ -154,7 +162,7 @@ export class UploadComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.task?.cancel();
-        clearTimeout(this.timeoutId as NodeJS.Timeout)
+        clearTimeout(this.timeoutId as NodeJS.Timeout);
     }
 
 }

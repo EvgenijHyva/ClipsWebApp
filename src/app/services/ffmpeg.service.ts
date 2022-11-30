@@ -29,10 +29,11 @@ export class FfmpegService {
 		this.ffmpeg.FS('writeFile', file.name, data); //File system: read and write files
 		// series of random screenshots
 		const videoDuration = await getVideoDuration(file);
+		const maxDuration = videoDuration < 60 ? videoDuration : 60;
 		const timeArray: string[] = [];
 		for(let i:number = 0; i < 3; i++) {
-			let secondSnapshot = Math.floor(Math.random() * videoDuration)
-			let time = new Date(secondSnapshot * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)![0];
+			const secondSnapshot = Math.floor(Math.random() * maxDuration)
+			const time = new Date(secondSnapshot * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)![0];
 			timeArray.push(time)
 		}
 
@@ -65,7 +66,14 @@ export class FfmpegService {
 		this.isRunning = false;
 		return screenshots;
 	}
+
+	async blobFromURL(url:string) {
+		const response = await fetch(url); // fetch file from url
+		const blob = await response.blob();
+		return blob;
+	}
 }
+
 export const getVideoDuration = (file:File):Promise<number> =>
 	new Promise((resolve, reject) => {
 		const reader = new FileReader();
