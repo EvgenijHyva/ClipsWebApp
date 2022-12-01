@@ -10,7 +10,9 @@ import { clipsSortingDirection } from '../video/manage/manage.component';
     providedIn: 'root'
 })
 export class ClipService {
-	public clipsCollection: AngularFirestoreCollection<IClip>
+	public clipsCollection: AngularFirestoreCollection<IClip>;
+	pageClips: IClip[] = [];
+	pendingRequest: boolean = false;
 
     constructor(
 		private readonly db: AngularFirestore,
@@ -59,5 +61,33 @@ export class ClipService {
 		await clipRef.delete();
 		await screenshotRef.delete();
 		await this.clipsCollection.doc(clip.docID).delete();
+	}
+
+	async getClips() {
+		if (this.pendingRequest) return;
+		this.pendingRequest = true;
+
+		let query = this.clipsCollection.ref.orderBy(
+			'timestamp', 'desc'
+		).limit(10)
+
+		const { length } = this.pageClips;
+		if (length) {
+			const lascDocID = this.pageClips[length-1].docID;
+			const lastDoc = await this.clipsCollection.doc(lascDocID)
+				.get() // init query, returns Observable
+				.toPromise() // convert into promise
+			
+			query = query.startAfter(lastDoc);
+		}
+		const snapshot = await query.get();
+		snapshot.forEach(doc => {
+			this.pageClips.push({
+				docID: doc.id,
+				...doc.data()
+			})
+		})
+
+		this.pendingRequest = false;
 	}
 }
