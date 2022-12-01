@@ -27,7 +27,7 @@
 
 			<!-- Image -->
 			<a href="#">
-				<img class="card-img-top rounded-tl-2xl w-full" src="assets/img/1.jpg">
+				<img class="card-img-top rounded-tl-2xl w-full" [src]="clip.screenshotURL" crossorigin>
 			</a>
 
 			<!-- Body -->
@@ -37,7 +37,7 @@
 				<a 
 					routerLink=""
 					class="font-bold mb-2">
-					{{ clip.title }}
+					{{ clip.title | titlecase }}
 				</a>
 				<a href="#" class="bg-gray-400 text-white px-2 py-1 ml-2 text-sm rounded">
 					Copy Link
