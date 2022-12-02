@@ -16,7 +16,8 @@ export class ManageComponent implements OnInit {
 	videoOrder: clipsSortingDirection = '1';
 	clips: IClip[] = [];
 	activeClip: IClip | null = null;
-	sort$: BehaviorSubject<clipsSortingDirection>
+	sort$: BehaviorSubject<clipsSortingDirection>;
+	showCopiedLinkInfoId: string = '';
 
 	constructor(
 		private readonly router: Router,
@@ -55,6 +56,18 @@ export class ManageComponent implements OnInit {
 		event.preventDefault();
 		this.clipService.deleteUserClip(clip);
 		this.clips = this.clips.filter(userClip => userClip.docID !== clip.docID);
+	}
+
+	async copyToClipboard(event: MouseEvent, clipId: string | undefined) {
+		event.preventDefault();
+		if (!clipId) return;
+		// location is defined by browser (current location)
+		const url = `${location.origin}/clip/${clipId}`;
+		await navigator.clipboard.writeText(url);
+		this.showCopiedLinkInfoId = clipId;
+		setTimeout(()=> {
+			this.showCopiedLinkInfoId = '';
+		}, 1000) 
 	}
 
 	ngOnInit(): void {
