@@ -12,6 +12,7 @@
 
 .video-js {
 	position: initial;
+	background-color: transparent;
 }
 
 .video-js .vjs-control-bar {
@@ -72,4 +73,9 @@
 
 .video-js .vjs-time-control {
 	font-size: 2em;
+}
+
+.vjs_video_3-dimensions {
+	width: auto;
+	height: auto;
 }
