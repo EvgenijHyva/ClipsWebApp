@@ -5,11 +5,12 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { of, switchMap, map, BehaviorSubject, combineLatest } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { clipsSortingDirection } from '../video/manage/manage.component';
+import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
 })
-export class ClipService {
+export class ClipService implements Resolve<IClip | null> { // return data from resolve
 	public clipsCollection: AngularFirestoreCollection<IClip>;
 	pageClips: IClip[] = [];
 	pendingRequest: boolean = false;
@@ -17,7 +18,8 @@ export class ClipService {
     constructor(
 		private readonly db: AngularFirestore,
 		private readonly auth: AngularFireAuth,
-		private readonly storage: AngularFireStorage
+		private readonly storage: AngularFireStorage,
+		private readonly router: Router
 	) { 
 		this.clipsCollection = db.collection('clips')
 	}
@@ -89,5 +91,20 @@ export class ClipService {
 		})
 
 		this.pendingRequest = false;
+	}
+
+	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) { // function for retreaving data from page component (Router interface)
+		return this.clipsCollection.doc(route.params.id)
+			.get()
+			.pipe(
+				map(snapshot => {
+					const data = snapshot.data()
+					if (!data) {
+						this.router.navigate(['/'])
+						return null;
+					}
+					return data;
+				})
+			)
 	}
 }
