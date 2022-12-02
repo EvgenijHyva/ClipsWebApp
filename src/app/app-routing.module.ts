@@ -22,6 +22,10 @@ const routes: Routes = [
 			clip: ClipService
 		}
 	},
+	{
+		path: '',
+		loadChildren: async () => (await import('./video/video.module')).VideoModule // lazy loading
+	},
 	{ // wild card path for capture invalid path's
 		path: '**',
 		component: NotFoundComponent

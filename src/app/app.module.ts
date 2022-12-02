@@ -10,7 +10,7 @@ import { UserModule } from './user/user.module';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
-import { VideoModule } from './video/video.module';
+// import { VideoModule } from './video/video.module'; // lazy loading implementation
 import { ClipComponent } from './clip/clip.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -36,7 +36,7 @@ import { FbTimestampPipe } from './pipes/fb-timestamp.pipe';
     AngularFireAuthModule,
     AngularFirestoreModule, // communicating with firebase 
     AngularFireStorageModule,
-    VideoModule,
+    // VideoModule, // lazy loading
     AppRoutingModule
   ],
   providers: [],
