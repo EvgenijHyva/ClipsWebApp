@@ -44,4 +44,12 @@ describe('TabComponent', () => {
 		const element = document.querySelector('.hidden');
 		expect(element).toBeTruthy();
 	})
+
+	it('Element should disappeare by changing active property.', () => {
+		component.active = true;
+		fixture.detectChanges();
+		const element = fixture.nativeElement.querySelector('.hidden');
+		expect(element).not.toBeTruthy();
+		// expect(element).toBeFalsy();
+	})
 });
