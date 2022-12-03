@@ -39,7 +39,10 @@ describe('TabsContainerComponent', () => {
 	// template render list item elements
 	it('Should have 2 tabs', () => {
 		const tabs = fixture.debugElement.queryAll(By.css('li'));
-		expect(tabs.length).toBe(2);
+		let tabsExpected = 2;
+		expect(tabs.length)
+			.withContext(`${tabsExpected} Tabs did not render`) // custom error message
+			.toBe(tabsExpected);
 	});
 
 	it('Should have 2 tabs, alternative test.', () => {
@@ -48,6 +51,8 @@ describe('TabsContainerComponent', () => {
 			By.directive(TabsContainerComponent
 		));
 		const tabsProp = containerComponent.componentInstance.tabs;
-		expect(tabsProp.length).toBe(2);
+		expect(tabsProp.length)
+			.withContext('Could not grab component instance property')
+			.toBe(2);
 	})
 });
