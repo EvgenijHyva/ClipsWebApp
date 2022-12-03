@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 // hiden issue with routing. browser console. 
 import { RouterTestingModule } from '@angular/router/testing';
+import { By } from '@angular/platform-browser';
 
 describe('NavComponent', () => {
 	let component: NavComponent;
@@ -44,5 +45,21 @@ describe('NavComponent', () => {
 
 	it('Nav component should create', () => {
 		expect(component).toBeTruthy();
+	});
+
+	it('Should logout', () => {
+		const logoutLink = fixture.debugElement.query(
+			By.css('li:nth-child(1) a')
+		);
+		expect(logoutLink)
+			.withContext('Not logged in')
+			.toBeTruthy();
+		
+		// simulating DOM events
+		const service = TestBed.inject(AuthService);
+		logoutLink.triggerEventHandler('click');
+		expect(service.logout)
+			.withContext('Could not click logout link')
+			.toHaveBeenCalledTimes(1);
 	});
 });
