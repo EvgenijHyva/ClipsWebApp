@@ -44,3 +44,6 @@ Thumbs.db
 # Text
 docks*
 templates/
+
+# Test changes
+*.spec-broken.ts
