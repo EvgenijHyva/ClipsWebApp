@@ -7,6 +7,8 @@ import { of } from 'rxjs';
 // Unit tests are isolated.
 // Dependencies have to be mocked
 import { AuthService } from '../services/auth.service';
+// hiden issue with routing. browser console. 
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('NavComponent', () => {
 	let component: NavComponent;
@@ -29,7 +31,9 @@ describe('NavComponent', () => {
 					provide: AuthService,
 					useValue: mockedAuthService
 				} 
-			]
+			],
+			// repair issue with routing
+			imports: [ RouterTestingModule ]
 		})
 		.compileComponents();
 
@@ -38,7 +42,7 @@ describe('NavComponent', () => {
 		fixture.detectChanges();
 	});
 
-	it('should create', () => {
+	it('Nav component should create', () => {
 		expect(component).toBeTruthy();
 	});
 });
